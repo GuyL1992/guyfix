@@ -10,7 +10,6 @@
 static PyObject* getDataPoints_capi(PyObject *self, PyObject *args);
 static void convert_cMatrix_to_pyMAtrix(PyObject* pyMatrix, double** cMatrix, int n,int d);
 static void convert_pyMatrix_to_cMatrix(PyObject* pyMatrix, double** cMatrix, int n, int d);
-/*static void convert_point_to_c(PyObject* point_py, double* point, int d);*/
 static PyObject* wam(PyObject *self, PyObject *args);
 
 static PyObject* getDataPoints_capi(PyObject *self, PyObject *args){   
@@ -127,22 +126,9 @@ static void convert_pyMatrix_to_cMatrix(PyObject* pyMatrix, double** cMatrix, in
     for (i = 0; i< n; i++){
 
         py_point = PyList_GET_ITEM(pyMatrix,i);
-
-        /*c_point = (double*)calloc(d,sizeof(double));
-        assert(c_point!=NULL && "An Error Has Occured");*/
-
         c_point = allocationVector(d);
 
-        /*cMatrix[i] = (double *)calloc(d,sizeof(double));
-        assert(cMatrix[i]!=NULL && "An Error Has Occured");*/
-
-        /*convert_point_to_c(py_point, c_point, d);*/
-
-        for (j = 0; j < d; j++){
-            /* item = PyList_GetItem(py_point,j);
-            temp = PyFloat_AsDouble(item); */
-            c_point[j] =  PyFloat_AsDouble(PyList_GetItem(py_point,j)); /* temp; */
-        }
+        for (j = 0; j < d; j++){c_point[j] =  PyFloat_AsDouble(PyList_GetItem(py_point,j));}
 
         for(j=0; j <d ; j++){
             cItem = c_point[j];
@@ -152,17 +138,6 @@ static void convert_pyMatrix_to_cMatrix(PyObject* pyMatrix, double** cMatrix, in
     }
 }
 
-/*static void convert_point_to_c(PyObject* point_py, double* point, int d){
-    int i;
-    double temp;
-    PyObject* item;
-    for (i=0;i<d;i++){
-        item = PyList_GetItem(point_py,i);
-        temp = PyFloat_AsDouble(item);
-        point[i] = temp;
-        
-    }
-}*/
 
 static void convert_cMatrix_to_pyMAtrix(PyObject* pyMatrix, double** cMatrix, int n,int d){
 
