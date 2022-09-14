@@ -1,7 +1,7 @@
 /*Declerations for Kmeans algorithm and helper functions */
 void kmeansAlgorithm(double** observations, double** centroids, int n, int d,int k);
 void acumulate_sum(double* a, double* b, int d);
-int checkDiff(double** centroids, double** centroids_in_progress, int k, int d);
+int checkNormCondition(double** centroids, double** centroids_in_progress, int k, int d);
 double distance(double* a, double* b, int d);
 int eps_distance(double* vec1, double* vec2, int d);
 int findMatch(double** centroids, double* vector,int k, int d);
@@ -32,7 +32,6 @@ void formLnormMatrix (double** lNormMatrix, double** weightedMatrix,double** deg
 
 void formRotaionAndAtagMatrix(double** P ,double** A, int n);
 void formIdentityMatrix(double** V, int n);
-double ** getTransposeMatrix(double** matrix, int n);
 void getSimilarMatrix(double** A, double** P,double** temp, int n);
 double getOff(double ** A, int n);
 void jaccobiAlgorithm (double** V,double** A, int n);
@@ -41,15 +40,11 @@ void jaccobiAlgorithm (double** V,double** A, int n);
 
 int cmpfuncDouble (const void * a, const void * b);
 int TheEigengapHeuristic(double* eigenValues, int lenOfArr);
-
 void normelize_matrix(double** matrix, int n, int d);
 int cmpfuncEignvalues (const void * a, const void * b);
 void sortEigenVectors(double**T, double** eigenVectors, double* eingeValues, int n,int k);
 
-
-
-
-/*Declerations for General Processes*/
+/*Declerations for General Main Processes*/
 
 double** getDataPoints(double** observations, int n, int d, int* k);
 void wamProcess(double** observations, int n, int d);

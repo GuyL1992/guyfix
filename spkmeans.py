@@ -23,7 +23,7 @@ def initial_points(file_name):
     """
 
     with open(file_name,'r') as file:
-
+        
         def parse_row(row):
             return list(map(lambda point: float(point),row.split(',')))
         observations = list(map(lambda row: parse_row(row), file))
@@ -47,6 +47,7 @@ def kmeans_pp(k,data_arr,n,d):
     Returns:
         list[int], dataFrame: list of initiate k index, and the actual init k vectors as df
     """
+
     np.random.seed(0)
     first_centroid = np.random.choice(n)
     centroids_index = []
@@ -103,10 +104,11 @@ if __name__ == "__main__":
         observations, n, d = initial_points(input_path)
     except:
         invalid_input()
+        exit()
 
     message = False
     try:
-        if goal ==  (Goals.SPK.value):
+        if goal == (Goals.SPK.value):
             k = int(k_float)   
             if k_float != k or k < 0:
                 message = invalid_input()

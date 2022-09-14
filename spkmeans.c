@@ -17,8 +17,12 @@ typedef struct EignValueObj{
 
 /* implementation for K-means Calculation process and it's helper functions */
 
-
 int eps_distance(double* vec1, double* vec2, int d){
+    /**
+     * @brief for two input vectors return 1 if are different more than EPSILON 
+     *(according to the assigment defenition), else 0
+     * 
+     */
     double norm1;
     double norm2;
     int i;
@@ -53,6 +57,10 @@ double distance(double* a, double* b, int d){
     return distance;
 }
 int findMatch(double** centroids, double* vector,int k, int d){
+    /**
+     * @brief return the index of the closest centroid for a given vector
+     * 
+     */
     int i;
     double curr_distance;
     int closest_index = -1;
@@ -68,10 +76,9 @@ int findMatch(double** centroids, double* vector,int k, int d){
     return closest_index;
 }
 
-int checkDiff(double** centroids, double** centroids_in_progress, int k, int d){
+int checkNormCondition(double** centroids, double** centroids_in_progress, int k, int d){
     int i;
     int res;
-
     res = 1;
 
     for(i = 0; i < k; i++){
@@ -82,6 +89,10 @@ int checkDiff(double** centroids, double** centroids_in_progress, int k, int d){
 }
 
 void acumulate_sum(double* a, double* b, int d){
+    /**
+     * @brief add vector b to vector a
+     * 
+     */
     int i;
     for (i = 0; i < d; i ++){
         a[i] += b[i];
@@ -113,7 +124,7 @@ void kmeansAlgorithm(double** observations, double** centroids, int n, int d,int
             }
         }
 
-        norm_condition = checkDiff(centroids, centroids_in_progress,k,d);
+        norm_condition = checkNormCondition(centroids, centroids_in_progress,k,d);
 
         if (norm_condition == 1){break;} /* After the centroids was updated check the E.Norm condition */
             
@@ -189,6 +200,10 @@ double* allocationVector(int n){
 }
 
 void copyMatrix(double** target, double** source,int n){
+    /**
+     * @brief copy the source matrix content into target matrix
+     * 
+     */
      int i;
      int j;
      for(i = 0; i < n; i++){
@@ -199,6 +214,10 @@ void copyMatrix(double** target, double** source,int n){
  }
 
 void getDimentions(char arr[], int* n, int* d){ 
+    /**
+     * @brief for a given file name containing vectors data, return the vectors dimention
+     * 
+     */
     FILE *txt = NULL;
     char ch;
     int lines =0;
@@ -431,7 +450,7 @@ void formRotaionAndAtagMatrix(double** P ,double** A, int n){
     double s;
     double c; 
     double t;
-    double tetha, signTetha, absTetha;
+    double theta, sign;
     double *maxRowcolumn, *maxColcolumn; 
 
     for (i = 0; i < n; i++){ /* the matrix is simetric so we can scan just the elemets above the diagonal*/
@@ -446,14 +465,12 @@ void formRotaionAndAtagMatrix(double** P ,double** A, int n){
     
     /*compute the rotation values - theta, s,t,c*/
 
-    tetha = (A[maxValueCol][maxValueCol]-A[maxValueRow][maxValueRow])/(2*A[maxValueRow][maxValueCol]);
-    tetha < 0 ? (signTetha = -1) : (signTetha = 1);
-    tetha < 0 ? (absTetha = - tetha) : (absTetha = tetha);
-    t = signTetha / (absTetha + pow((pow(tetha,2)+1),0.5));
-    c = 1/(pow((pow(t,2)+1),0.5));
+    theta = (A[maxValueCol][maxValueCol]-A[maxValueRow][maxValueRow])/(2*A[maxValueRow][maxValueCol]);
+    theta < 0 ? (sign = -1) : (sign = 1);
+    /*tetha < 0 ? (absTetha = - tetha) : (absTetha = tetha);*/
+    t = sign / (fabs(theta) + sqrt(pow(theta,2)+1));
+    c = 1/(sqrt(pow(t,2)+1));
     s = t * c;
-
-   
 
     for (i = 0; i < n; i++){ /* fill in the new  rotation matrix */
         for(j = 0; j < n; j++){
@@ -491,9 +508,9 @@ void formRotaionAndAtagMatrix(double** P ,double** A, int n){
     {
         if(r!=i && r!=j)
         {
-            A[r][i] = c*maxRowcolumn[r] - s*maxColcolumn[r];
+            A[r][i] = c * maxRowcolumn[r] - s * maxColcolumn[r];
             A[i][r] = A[r][i];
-            A[r][j] = c*maxColcolumn[r] + s* maxRowcolumn[r];
+            A[r][j] = c * maxColcolumn[r] + s * maxRowcolumn[r];
             A[j][r] = A[r][j];
         }
     }
@@ -505,30 +522,17 @@ void formRotaionAndAtagMatrix(double** P ,double** A, int n){
 }
 
 void formIdentityMatrix(double** V, int n){ 
-
     int i;
     for( i = 0; i < n; i++){
         V[i][i] = 1;
     }
-
-}
-
-double ** getTransposeMatrix(double** matrix, int n){
-    int i;
-    int j;
-    double temp;
-
-    for(i = 0; i < n; i++){
-        for(j = i + 1; j < n; j++){
-            temp = matrix[i][j];
-            matrix[i][j] = matrix[j][i];
-            matrix[j][i] = temp;
-        }
-    }
-    return matrix;
 }
 
 void fill_with_diagonal(double* eigenValues, double** A, int n){
+    /**
+     * @brief insert into eigenValues array the diagonal values of A 
+     * 
+     */
     int i;
     for(i=0; i < n; i++){
         eigenValues[i] = A[i][i];
@@ -536,6 +540,10 @@ void fill_with_diagonal(double* eigenValues, double** A, int n){
 }
 
 double getOff(double ** A, int n){
+    /**
+     * @brief return the off(A)^2 value
+     * 
+     */
     double offA = 0;
     int i = 0;
     int j = 0;
@@ -570,8 +578,6 @@ void jaccobiAlgorithm (double** V, double** A, int n){
     double** temp = allocationMatrix(n,n);
     formIdentityMatrix(V,n); /* first: V equal to the Identity matrix */
 
-
-
     do{
         offA = offAtag;
         formRotaionAndAtagMatrix(P,A,n);
@@ -602,20 +608,14 @@ int cmpfuncEignvalues (const void * a, const void * b) { /*Comperator for qsort 
    EignValueObj first = *(EignValueObj*)a;
    EignValueObj second = *(EignValueObj*)b;
 
-   if (first.value > second.value){
-       return -1;
-   }
-   else if (first.value < second.value){
-       return 1;
-   }
-   else{
-       if (first.sourceIndex <= second.sourceIndex){
-           return -1;
+   if (first.value > second.value){return -1;}
+
+   else if (first.value < second.value){return 1;}
+
+   else {
+       if (first.sourceIndex <= second.sourceIndex){return -1;}
+       else {return 1;}
        }
-       else{
-           return 1;
-       }
-   }
 }
 
 /**
@@ -659,7 +659,6 @@ void normelize_matrix(double** matrix, int n, int d){ /*get "normal" valus of T 
     double s;
 
     double* rows_sums = allocationVector(n);
-
 
     for(i=0; i < n; i++){
         s = 0;
@@ -729,6 +728,10 @@ int TheEigengapHeuristic(double* eigenValues, int lenOfArr) {
 */
 
 void wamProcess(double** observations, int n, int d){
+    /**
+     * @brief form and print the weighted adjacency matrix
+     * 
+     */
     
     double** weightedMatrix = allocationMatrix(n,n);
     formWeightedMatrix(weightedMatrix,observations,n,d);
@@ -737,6 +740,10 @@ void wamProcess(double** observations, int n, int d){
 }
 
 void ddgProcess (double** observations, int n, int d){
+    /**
+     * @brief form and print the  Diagonal Degree matrix
+     * 
+     */
     double** weightedMatrix = allocationMatrix(n,n);
     double** degreeMatrix = allocationMatrix(n,n);
     int regularMode = 1;
@@ -749,6 +756,10 @@ void ddgProcess (double** observations, int n, int d){
 }
 
 void lnormProcess (double** observations, int n, int d){
+    /**
+     * @brief form and print the Normalized Graph Laplacian
+     * 
+     */
     int regularMode = 0;
     double** weightedMatrix = allocationMatrix(n,n);
     double** degreeMatrix = allocationMatrix(n,n);
@@ -766,6 +777,10 @@ void lnormProcess (double** observations, int n, int d){
 }
 
 void jacobiProcess(double** observations, int n){
+    /**
+     * @brief form and print the eigenValues and Vectors produced by the jacobi algorithm 
+     * 
+     */
 
     double** eigenVectors = allocationMatrix(n,n);
     double* eigenValues = (double*) calloc (n,sizeof(double));
@@ -785,6 +800,10 @@ void jacobiProcess(double** observations, int n){
 }
 
 double** getDataPoints(double** observations, int n, int d, int* k){
+    /**
+     * @brief return the T matrix ( n X k ) represent the new data point as the part of SPK proccess 
+     * 
+     */
 
     int regularMode = 0;
     double** weightedMatrix = allocationMatrix(n,n);
@@ -842,6 +861,7 @@ int main(int argc, char *argv[]){
     
     getDimentions(input,&n,&d);
     observations= getObservationsFromInput(input,n,d);
+    
     switch(converttoGoalEnum(flow)){ 
 
         case wam:

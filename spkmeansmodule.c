@@ -12,7 +12,11 @@ static void convert_cMatrix_to_pyMAtrix(PyObject* pyMatrix, double** cMatrix, in
 static void convert_pyMatrix_to_cMatrix(PyObject* pyMatrix, double** cMatrix, int n, int d);
 static PyObject* wam(PyObject *self, PyObject *args);
 
-static PyObject* getDataPoints_capi(PyObject *self, PyObject *args){   
+static PyObject* getDataPoints_capi(PyObject *self, PyObject *args){
+    /**
+     * @brief for an input of python observations return the T (n X k) matrix as part of the SPH proccess
+     * 
+     */
    
     PyObject* source_dataPy;
     PyObject* result_dataPy;
@@ -35,6 +39,10 @@ static PyObject* getDataPoints_capi(PyObject *self, PyObject *args){
 
 static PyObject* kmeansAlgorithm_capi(PyObject *self, PyObject *args)
 {
+    /**
+     * @brief for an input of observations data (n X k) and K init clusters, perform the kmenas algorithm 
+     * 
+     */
     PyObject* observations_py;
     PyObject* centroids_py;
     int n,d,k;
@@ -57,6 +65,10 @@ static PyObject* kmeansAlgorithm_capi(PyObject *self, PyObject *args)
 }
 
 static PyObject* wam(PyObject *self, PyObject *args){
+    /**
+     * @brief for an input of observations form and print the weighted adjacency matrix
+     * 
+     */
     PyObject* source_dataPy;
     int n,d;
     double** sourceDataForC;
@@ -72,6 +84,10 @@ static PyObject* wam(PyObject *self, PyObject *args){
 }
 
 static PyObject* ddg(PyObject *self, PyObject *args){
+    /**
+     * @brief for an input of observations form and print the Diagonal Degree matrix
+     * 
+     */
     PyObject* source_dataPy;
     int n,d;
     double** sourceDataForC;
@@ -87,6 +103,11 @@ static PyObject* ddg(PyObject *self, PyObject *args){
 }
 
 static PyObject* jacobi(PyObject *self, PyObject *args){
+
+    /**
+     * @brief for an input of observations form and print the the eigenValues and vectors -> the output of jacobi algorithm 
+     * 
+     */
     PyObject* source_dataPy;
     int n,d;
     double** sourceDataForC;
@@ -102,6 +123,11 @@ static PyObject* jacobi(PyObject *self, PyObject *args){
 }
 
 static PyObject* lnorm(PyObject *self, PyObject *args){
+
+    /**
+     * @brief for an input of observations form and print the Normalized Graph Laplacian
+     * 
+     */
     PyObject* source_dataPy;
     int n,d;
     double** sourceDataForC;
@@ -124,10 +150,8 @@ static void convert_pyMatrix_to_cMatrix(PyObject* pyMatrix, double** cMatrix, in
     double* c_point;
 
     for (i = 0; i< n; i++){
-
         py_point = PyList_GET_ITEM(pyMatrix,i);
         c_point = allocationVector(d);
-
         for (j = 0; j < d; j++){c_point[j] =  PyFloat_AsDouble(PyList_GetItem(py_point,j));}
 
         for(j=0; j <d ; j++){
@@ -156,13 +180,13 @@ static void convert_cMatrix_to_pyMAtrix(PyObject* pyMatrix, double** cMatrix, in
     
 }
 
-static PyMethodDef _capiMethods[] = {
-    {"kmeans", (PyCFunction) kmeansAlgorithm_capi, METH_VARARGS, PyDoc_STR("calculate kmeans from given datapoints")},
-    {"get_new_data", (PyCFunction) getDataPoints_capi, METH_VARARGS, PyDoc_STR("process the input threw the SPK process to get the new datapoionts")},
-    {"jacobi", (PyCFunction) jacobi, METH_VARARGS, PyDoc_STR("perform jacobi algorithm - output eignvalues & eignVectors")},
+static PyMethodDef _capiMethods[] = { 
     {"wam", (PyCFunction) wam, METH_VARARGS, PyDoc_STR("form WAM")},
     {"ddg", (PyCFunction) ddg, METH_VARARGS, PyDoc_STR("form DDG")},
     {"lnorm", (PyCFunction) lnorm, METH_VARARGS, PyDoc_STR("form LNORM")},
+    {"jacobi", (PyCFunction) jacobi, METH_VARARGS, PyDoc_STR("perform jacobi algorithm - output eignvalues & eignVectors")},
+    {"get_new_data", (PyCFunction) getDataPoints_capi, METH_VARARGS, PyDoc_STR("process the input threw the SPK process to get the new datapoionts")},
+    {"kmeans", (PyCFunction) kmeansAlgorithm_capi, METH_VARARGS, PyDoc_STR("calculate kmeans from given datapoints")},
     {NULL,NULL,0,NULL}
 };
 
