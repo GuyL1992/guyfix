@@ -467,7 +467,6 @@ void formRotaionAndAtagMatrix(double** P ,double** A, int n){
 
     theta = (A[maxValueCol][maxValueCol]-A[maxValueRow][maxValueRow])/(2*A[maxValueRow][maxValueCol]);
     theta < 0 ? (sign = -1) : (sign = 1);
-    /*tetha < 0 ? (absTetha = - tetha) : (absTetha = tetha);*/
     t = sign / (fabs(theta) + sqrt(pow(theta,2)+1));
     c = 1/(sqrt(pow(t,2)+1));
     s = t * c;
